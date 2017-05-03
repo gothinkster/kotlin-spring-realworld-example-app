@@ -1,4 +1,4 @@
-# ![RealWorld Example App](logo.png)
+# ![RealWorld Example App using Kotlin and Spring](applogo.png)
 
 > ### Kotlin + Spring codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) spec and API.
 
@@ -57,4 +57,4 @@ Please fork and PR to improve the code.
 
 # Kotlin
 
-I've been using Kotlin for some time, but I'm no expert, so feel free to contribute and modify the code to make it more idiomatic !
+I've been using Kotlin for some time, but I'm no expert, so feel free to contribute and modify the code to make it more idiomatic!
