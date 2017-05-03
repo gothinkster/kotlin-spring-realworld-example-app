@@ -1,5 +1,7 @@
 package io.realworld.exception
 
-/**
- * Created by alex on 30/04/2017.
- */
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class NotFoundException : RuntimeException()

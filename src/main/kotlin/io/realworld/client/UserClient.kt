@@ -1,16 +1,14 @@
 package io.realworld.client
 
 import feign.RequestLine
-import io.realworld.model.out.Profile
-import org.springframework.web.bind.annotation.PathVariable
+import io.realworld.model.User
+import io.realworld.model.inout.Login
+import io.realworld.model.inout.Register
 
-interface ProfileClient {
-    @RequestLine("GET /api/profiles/{username}")
-    fun profile(@PathVariable username: String) : Profile
+interface UserClient {
+    @RequestLine("POST /api/users/login")
+    fun login(login: Login): User
 
-    @RequestLine("POST /api/profiles/{username}/follow")
-    fun follow(@PathVariable username: String) : Profile
-
-    @RequestLine("DELETE /api/profiles/{username}/follow")
-    fun unfollow(@PathVariable username: String) : Profile
+    @RequestLine("POST /api/users")
+    fun register(register: Register): User
 }

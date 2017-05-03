@@ -11,6 +11,10 @@
 *.launch
 .settings/
 
+target/
+*.class
+*.jar
+*.iml
 
 #System Files
 .DS_Store

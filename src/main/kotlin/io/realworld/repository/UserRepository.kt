@@ -1,9 +1,14 @@
 package io.realworld.repository
 
-import io.realworld.model.Tag
-import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import io.realworld.model.User
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TagRepository : ReactiveCrudRepository<Tag, Long> {
+interface UserRepository : CrudRepository<User, Long> {
+    fun existsByEmail(email: String): Boolean
+    fun findByEmail(email: String): User?
+    fun findByToken(token: String): User?
+    fun findByEmailAndPassword(email: String, password: String): User?
+    fun findByUsername(username: String): User?
 }

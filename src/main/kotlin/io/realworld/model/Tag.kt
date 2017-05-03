@@ -1,11 +1,13 @@
-package io.realworld.models
+package io.realworld.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class Tag(var name: String = "",
+data class Tag(val name: String = "",
                @Id @GeneratedValue(strategy = GenerationType.AUTO)
-               var id: Long)
+               @JsonIgnore
+               var id: Long = 0)

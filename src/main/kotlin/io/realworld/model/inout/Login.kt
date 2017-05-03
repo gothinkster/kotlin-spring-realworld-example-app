@@ -1,5 +1,8 @@
 package io.realworld.model.inout
 
-/**
- * Created by alex on 02/05/2017.
- */
+import com.fasterxml.jackson.annotation.JsonRootName
+import org.hibernate.validator.constraints.NotEmpty
+
+@JsonRootName("user")
+data class Login(@NotEmpty var email: String = "",
+                 @NotEmpty var password: String = "")

@@ -1,23 +1,19 @@
 package io.realworld.jwt
 
 import io.realworld.model.User
-import io.realworld.repository.UserRepository
 import io.realworld.service.UserService
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 import org.aspectj.lang.reflect.MethodSignature
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.ResponseStatus
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import java.lang.reflect.Method
 
 /**
  * Aspect whose goal is to check automatically that methods
@@ -33,11 +29,10 @@ import java.lang.reflect.Method
  */
 @Aspect
 @Component
-class ApiKeySecuredAspect {
+class ApiKeySecuredAspect(@Autowired val userService: UserService) {
+
     @Autowired
-    private val userService: UserService? = null
-    @Autowired
-    private val request: HttpServletRequest? = null
+    var request: HttpServletRequest? = null
 
     @Pointcut(value = "execution(@io.realworld.jwt.ApiKeySecured * *.*(..))")
     fun securedApiPointcut() {
@@ -46,51 +41,58 @@ class ApiKeySecuredAspect {
     @Around("securedApiPointcut()")
     @Throws(Throwable::class)
     fun aroundSecuredApiPointcut(joinPoint: ProceedingJoinPoint): Any? {
-        if (request == null) {
-            throw IllegalStateException("No HttpServletRequest could be found.")
-        }
-
         // see the ExposeResponseInterceptor class.
-        val response = request.getAttribute(ExposeResponseInterceptor.KEY) as HttpServletResponse ?: throw IllegalStateException("No HttpServletResponse could be found. There's a problem with ExposeResponseInterceptor.")
-
-        // check for Bearer JWT Authentication
-        val apiKey = request.getHeader("Authorization").replace("Token |Bearer ", "")
-
-        if (StringUtils.isEmpty(apiKey)) {
-            if (LOG.isInfoEnabled)
-                LOG.info("No X-API-Key part of the request header/parameters, returning {}.", HttpServletResponse.SC_UNAUTHORIZED)
-
-            setStatus(response, HttpServletResponse.SC_UNAUTHORIZED)
-            response.setHeader("X-API-Key", "You shall not pass without providing an API Key")
-            response.writer.write("{\"error\": \"You must provide an X-API-Key header.\"}")
-            response.writer.flush()
-
-            return null
-        }
-
-        // find the user associated to the given api key.
-        val user = userService!!.findByToken(apiKey)
-        if (user == null) {
-            if (LOG.isInfoEnabled)
-                LOG.info("No user with X-API-Key: {}, returning {}.", apiKey, HttpServletResponse.SC_UNAUTHORIZED)
-
-            setStatus(response, HttpServletResponse.SC_UNAUTHORIZED)
-            response.setHeader("X-API-Key", "You shall not pass without providing a valid API Key")
-            response.writer.write("{\"error\": \"You must provide a valid X-API-Key header.\"}")
-            response.writer.flush()
-
-            return null
-        }
+        val response = request!!.getAttribute(ExposeResponseInterceptor.KEY) as HttpServletResponse
 
         // check for needed roles
         val signature = joinPoint.signature as MethodSignature
         val method = signature.method
         val anno = method.getAnnotation(ApiKeySecured::class.java)
-        userService.setCurrentUser(user)
 
+        val apiKey = request!!.getHeader("Authorization")?.replace("Token ", "")
 
-        if (LOG.isInfoEnabled)
-            LOG.info("OK accessing resource, proceeding.")
+        if (StringUtils.isEmpty(apiKey) && anno.mandatory) {
+            LOG.info("No Authorization part of the request header/parameters, returning {}.", HttpServletResponse.SC_UNAUTHORIZED)
+
+            issueError(response)
+            return null
+        }
+
+        // find the user associated to the given api key.
+        var user = userService.findByToken(apiKey ?: "")
+        LOG.info("user by token: ${user?.email}")
+        if (user == null && anno.mandatory) {
+            LOG.info("No user with Authorization: {}, returning {}.", apiKey, HttpServletResponse.SC_UNAUTHORIZED)
+
+            issueError(response)
+            return null
+        } else {
+            // validate JWT
+            try {
+                LOG.info("Validating JWT")
+                if (!userService.validToken(apiKey ?: "", user!!)) {
+                    LOG.info("JWT invalid")
+                    if (!anno.mandatory) {
+                        LOG.info("No problem because not mandatory")
+                        user = User()
+                    } else { // error
+                        LOG.info("Authorization: {} is an invalid JWT.", apiKey, HttpServletResponse.SC_UNAUTHORIZED)
+
+                        issueError(response)
+                        return null
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (anno.mandatory)
+                    issueError(response)
+            }
+        }
+
+        LOG.info("User is: ${user?.email}")
+        userService.setCurrentUser(user ?: User())
+
+        LOG.info("OK accessing resource, proceeding.")
 
         // execute
         try {
@@ -98,8 +100,7 @@ class ApiKeySecuredAspect {
             // remove user from thread local
             userService.clearCurrentUser()
 
-            if (LOG.isInfoEnabled)
-                LOG.info("DONE accessing resource.")
+            LOG.info("DONE accessing resource.")
 
             return result
         } catch (e: Throwable) {
@@ -107,14 +108,21 @@ class ApiKeySecuredAspect {
             val rs = e.javaClass.getAnnotation(ResponseStatus::class.java)
             if (rs != null) {
                 LOG.error("ERROR accessing resource, reason: '{}', status: {}.",
-                        if (StringUtils.isEmpty(e.message)) rs.reason() else e.message,
-                        rs.value())
+                        if (StringUtils.isEmpty(e.message)) rs.reason else e.message,
+                        rs.value)
             } else {
                 LOG.error("ERROR accessing resource", e)
             }
             throw e
         }
 
+    }
+
+    private fun issueError(response: HttpServletResponse) {
+        setStatus(response, HttpServletResponse.SC_UNAUTHORIZED)
+        response.setHeader("Authorization", "You shall not pass without providing a valid API Key")
+        response.writer.write("{\"error\": \"You must provide a valid Authorization header.\"}")
+        response.writer.flush()
     }
 
     fun setStatus(response: HttpServletResponse?, sc: Int) {

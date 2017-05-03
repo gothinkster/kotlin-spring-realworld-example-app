@@ -1,22 +1,22 @@
-package io.realworld.models
+package io.realworld.model
 
-import java.time.LocalDate
-import java.util.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import java.time.OffsetDateTime
+import javax.persistence.*
 
 @Entity
 data class Article(var slug: String = "",
                    var title: String = "",
                    var description: String = "",
                    var body: String = "",
-                   var tagList: List<Tag>,
-                   var createdAt: LocalDate,
-                   var updatedAt: LocalDate,
-                   var favorited: Boolean,
-                   var favoritesCount: Int,
-                   var author: User,
+                   @ManyToMany
+                   val tagList: MutableList<Tag> = mutableListOf(),
+                   var createdAt: OffsetDateTime = OffsetDateTime.now(),
+                   var updatedAt: OffsetDateTime = OffsetDateTime.now(),
+                   @ManyToMany
+                   var favorited: MutableList<User> = mutableListOf(),
+                   @ManyToOne
+                   var author: User = User(),
                    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-                   var id: Long)
+                   var id: Long = 0) {
+    fun favoritesCount() = favorited.size
+}

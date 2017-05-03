@@ -1,15 +1,15 @@
-package io.realworld.models
+package io.realworld.model
 
-import java.util.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import java.time.OffsetDateTime
+import javax.persistence.*
 
 @Entity
-data class Comment(var createdAt: Date = Date(),
-                   var updatedAt: Date,
-                   var body: String,
-                   var author: User,
+data class Comment(var createdAt: OffsetDateTime = OffsetDateTime.now(),
+                   var updatedAt: OffsetDateTime? = null,
+                   var body: String = "",
+                   @ManyToOne
+                   var article: Article = Article(),
+                   @ManyToOne
+                   var author: User = User(),
                    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-                   var id: Long)
+                   var id: Long = 0)

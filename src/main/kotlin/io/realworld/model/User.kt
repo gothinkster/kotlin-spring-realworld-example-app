@@ -1,16 +1,20 @@
-package io.realworld.models
+package io.realworld.model
 
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonRootName
+import javax.persistence.*
 
 @Entity
-data class User(var email: String,
-                var token: String,
-                var username: String,
-                var bio: String,
-                var image: String?,
-                var following: Boolean,
+@JsonRootName("user")
+data class User(var email: String = "",
+                @JsonIgnore
+                var password: String = "",
+                var token: String = "",
+                var username: String = "",
+                var bio: String = "",
+                var image: String = "",
+                @ManyToMany
+                @JsonIgnore
+                var follows: MutableList<User> = mutableListOf(),
                 @Id @GeneratedValue(strategy = GenerationType.AUTO)
-                var id: Long)
+                var id: Long = 0)

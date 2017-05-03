@@ -1,36 +1,27 @@
 package io.realworld.repository.specification
 
 import io.realworld.model.Article
-import io.realworld.model.User
-import io.realworld.model.jpa.Article_
 import io.realworld.model.Tag
-import org.hibernate.criterion.Order
+import io.realworld.model.User
 import org.springframework.data.jpa.domain.Specification
-
-import javax.persistence.criteria.*
-
-import au.com.console.jpaspecificationdsl.*
-
-import java.util.ArrayList
-
+import javax.persistence.criteria.Predicate
 
 object ArticlesSpecifications {
-
-    fun lastArticles(tag: Tag?, author: String?, fav: User?): Specification<Article> {
+    fun lastArticles(tag: Tag?, author: User?, fav: User?): Specification<Article> {
         return Specification { root, query, cb ->
-            val predicates = ArrayList<Predicate>()
+            val predicates = mutableListOf<Predicate>()
 
-            if (tag != null) {
+            tag?.let {
                 val tagList = root.get<Collection<Tag>>("tagList")
                 predicates.add(cb.isMember(tag, tagList))
             }
 
-            if (author != null) {
-                val user = root.get<String>("author.username")
+            author?.let {
+                val user = root.get<String>("author")
                 predicates.add(cb.equal(user, author))
             }
 
-            if (fav != null) {
+            fav?.let {
                 val favorited = root.get<Collection<User>>("favorited")
                 predicates.add(cb.isMember(fav, favorited))
             }

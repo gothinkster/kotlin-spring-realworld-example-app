@@ -1,9 +1,3 @@
-/**************************************************
- * Project: Da Club - http://daclub.sport
- * © dageeks - http://dageeks.com
-
- * Alexandre Grison & Antoine Picone
- */
 package io.realworld.jwt
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
