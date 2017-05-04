@@ -70,9 +70,9 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
             // validate JWT
             try {
                 LOG.info("Validating JWT")
-                if (!userService.validToken(apiKey ?: "", user!!)) {
+                if (!userService.validToken(apiKey ?: "", user ?: User())) {
                     LOG.info("JWT invalid")
-                    if (!anno.mandatory) {
+                    if (!anno.mandatory && user == null) {
                         LOG.info("No problem because not mandatory")
                         user = User()
                     } else { // error
@@ -83,9 +83,11 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                if (anno.mandatory)
+                if (anno.mandatory) {
                     issueError(response)
+                    return null
+                } else
+                    user = User()
             }
         }
 

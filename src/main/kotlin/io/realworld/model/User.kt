@@ -17,4 +17,6 @@ data class User(var email: String = "",
                 @JsonIgnore
                 var follows: MutableList<User> = mutableListOf(),
                 @Id @GeneratedValue(strategy = GenerationType.AUTO)
-                var id: Long = 0)
+                var id: Long = 0) {
+    override fun toString(): String = "User($email, $username)"
+}

@@ -3,7 +3,9 @@ package io.realworld.service
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.realworld.model.User
+import io.realworld.model.inout.Login
 import io.realworld.repository.UserRepository
+import org.mindrot.jbcrypt.BCrypt
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.*
@@ -52,5 +54,13 @@ class UserService(val userRepository: UserRepository,
         return userRepository.save(user)
     }
 
+    fun login(login: Login): User? {
+        userRepository.findByEmail(login.email!!)?.let {
+            if (BCrypt.checkpw(login.password!!, it.password)) {
+                return updateToken(it)
+            }
+        }
+        return null
+    }
 
 }

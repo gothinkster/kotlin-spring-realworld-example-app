@@ -1,6 +1,8 @@
 package io.realworld.web
 
+import com.github.slugify.Slugify
 import io.realworld.exception.ForbiddenRequestException
+import io.realworld.exception.InvalidRequest
 import io.realworld.exception.NotFoundException
 import io.realworld.jwt.ApiKeySecured
 import io.realworld.model.Article
@@ -8,6 +10,7 @@ import io.realworld.model.Comment
 import io.realworld.model.Tag
 import io.realworld.model.User
 import io.realworld.model.inout.NewArticle
+import io.realworld.model.inout.NewComment
 import io.realworld.model.inout.UpdateArticle
 import io.realworld.repository.ArticleRepository
 import io.realworld.repository.CommentRepository
@@ -17,8 +20,12 @@ import io.realworld.repository.specification.ArticlesSpecifications
 import io.realworld.service.UserService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.validation.Errors
+import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
+import java.util.*
+import javax.validation.Valid
 import io.realworld.model.inout.Article as ArticleIO
 import io.realworld.model.inout.Comment as CommentOut
 
@@ -68,22 +75,27 @@ class ArticleHandler(val repository: ArticleRepository,
 
     @ApiKeySecured
     @PostMapping("/api/articles")
-    fun newArticle(@RequestBody newArticle: NewArticle): Any {
+    fun newArticle(@Valid @RequestBody newArticle: NewArticle, errors: Errors): Any {
+        InvalidRequest.check(errors)
+
+        var slug = Slugify().slugify(newArticle.title!!)
+
+        if (repository.existsBySlug(slug)) {
+            slug += "-" + UUID.randomUUID().toString().substring(0, 8)
+        }
+
         val currentUser = userService.currentUser()
-        if (newArticle.title == "" || newArticle.description == "" || newArticle.body == "")
-            throw TODO()
 
         // search for tags
         val tagList = newArticle.tagList.map {
             tagRepository.findByName(it) ?: tagRepository.save(Tag(name = it))
         }
 
-        val article = Article(slug = newArticle.title.toLowerCase().replace(" ", "-"),
-                author = currentUser, title = newArticle.title, description = newArticle.description,
-                body = newArticle.body, tagList = tagList.toMutableList())
+        val article = Article(slug = slug,
+                author = currentUser, title = newArticle.title!!, description = newArticle.description!!,
+                body = newArticle.body!!, tagList = tagList.toMutableList())
 
         return articleView(repository.save(article), currentUser)
-
     }
 
     @ApiKeySecured
@@ -94,6 +106,25 @@ class ArticleHandler(val repository: ArticleRepository,
             if (it.author.id != currentUser.id)
                 throw ForbiddenRequestException()
 
+            // check for errors
+            val errors = org.springframework.validation.BindException(this, "")
+            if (article.title == "")
+                errors.addError(FieldError("", "title", "can't be empty"))
+            if (article.description == "")
+                errors.addError(FieldError("", "description", "can't be empty"))
+            if (article.body == "")
+                errors.addError(FieldError("", "body", "can't be empty"))
+            InvalidRequest.check(errors)
+
+            var slug: String = it.slug
+            article.title?.let {
+                // we don't want conflicting slugs
+                slug = Slugify().slugify(article.title!!)
+                if (repository.existsBySlug(slug)) {
+                    slug += "-" + UUID.randomUUID().toString().substring(0, 8)
+                }
+            }
+
             // search for tags
             val tagList = article.tagList?.map {
                 tagRepository.findByName(it) ?: tagRepository.save(Tag(name = it))
@@ -102,7 +133,7 @@ class ArticleHandler(val repository: ArticleRepository,
             val updated = it.copy(title = article.title ?: it.title,
                     description = article.description ?: it.description,
                     body = article.body ?: it.body,
-                    slug = (article.title ?: it.title).toLowerCase().replace(" ", "-"),
+                    slug = slug,
                     updatedAt = OffsetDateTime.now(),
                     tagList = if (tagList == null || tagList.isEmpty()) it.tagList
                     else tagList.toMutableList())
@@ -136,10 +167,12 @@ class ArticleHandler(val repository: ArticleRepository,
 
     @ApiKeySecured
     @PostMapping("/api/articles/{slug}/comments")
-    fun addComment(@PathVariable slug: String, @RequestBody comment: CommentOut): Any {
+    fun addComment(@PathVariable slug: String, @Valid @RequestBody comment: NewComment, errors: Errors): Any {
+        InvalidRequest.check(errors)
+
         repository.findBySlug(slug)?.let {
             val currentUser = userService.currentUser()
-            val newComment = Comment(body = comment.body, article = it, author = currentUser)
+            val newComment = Comment(body = comment.body!!, article = it, author = currentUser)
             return commentView(commentRepository.save(newComment), currentUser)
         }
         throw NotFoundException()
