@@ -117,11 +117,13 @@ class ArticleHandler(val repository: ArticleRepository,
             InvalidRequest.check(errors)
 
             var slug: String = it.slug
-            article.title?.let {
-                // we don't want conflicting slugs
-                slug = Slugify().slugify(article.title!!)
-                if (repository.existsBySlug(slug)) {
-                    slug += "-" + UUID.randomUUID().toString().substring(0, 8)
+            article.title?.let { newTitle ->
+                if (newTitle != it.title) {
+                    // we don't want conflicting slugs
+                    slug = Slugify().slugify(article.title!!)
+                    if (repository.existsBySlug(slug)) {
+                        slug += "-" + UUID.randomUUID().toString().substring(0, 8)
+                    }
                 }
             }
 
@@ -140,6 +142,7 @@ class ArticleHandler(val repository: ArticleRepository,
 
             return articleView(repository.save(updated), currentUser)
         }
+        
         throw NotFoundException()
     }
 

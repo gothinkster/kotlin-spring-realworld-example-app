@@ -59,9 +59,18 @@ class UserHandler(val repository: UserRepository,
 
         // check for errors
         val errors = org.springframework.validation.BindException(this, "")
-        checkUserAvailability(errors, user.email, user.username)
+        if (currentUser.email != user.email && user.email != null) {
+            if (repository.existsByEmail(user.email!!)) {
+                errors.addError(FieldError("", "email", "already taken"))
+            }
+        }
+        if (currentUser.username != user.username && user.username != null) {
+            if (repository.existsByUsername(user.username!!)) {
+                errors.addError(FieldError("", "username", "already taken"))
+            }
+        }
         if (user.password == "") {
-            errors.addError(FieldError("", "password", "already taken"))
+            errors.addError(FieldError("", "password", "can't be empty"))
         }
         InvalidRequest.check(errors)
 
@@ -69,7 +78,10 @@ class UserHandler(val repository: UserRepository,
         val u = currentUser.copy(email = user.email ?: currentUser.email, username = user.username ?: currentUser.username,
                 password = BCrypt.hashpw(user.password, BCrypt.gensalt()), image = user.image ?: currentUser.image,
                 bio = user.bio ?: currentUser.bio)
-        u.token = service.newToken(u)
+        // update token only if email changed
+        if (currentUser.email != u.email) {
+            u.token = service.newToken(u)
+        }
 
         return view(repository.save(u))
     }

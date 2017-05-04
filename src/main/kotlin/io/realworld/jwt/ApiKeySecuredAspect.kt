@@ -41,6 +41,9 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
     @Around("securedApiPointcut()")
     @Throws(Throwable::class)
     fun aroundSecuredApiPointcut(joinPoint: ProceedingJoinPoint): Any? {
+        if (request!!.method == "OPTIONS")
+            return joinPoint.proceed()
+
         // see the ExposeResponseInterceptor class.
         val response = request!!.getAttribute(ExposeResponseInterceptor.KEY) as HttpServletResponse
 
@@ -123,7 +126,7 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
     private fun issueError(response: HttpServletResponse) {
         setStatus(response, HttpServletResponse.SC_UNAUTHORIZED)
         response.setHeader("Authorization", "You shall not pass without providing a valid API Key")
-        response.writer.write("{\"error\": \"You must provide a valid Authorization header.\"}")
+        response.writer.write("{\"errors\": {\"Authorization\": [\"You must provide a valid Authorization header.\"]}}")
         response.writer.flush()
     }
 

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
@@ -29,6 +30,17 @@ class ApiApplication(val tagRepository: TagRepository,
 
     override fun addInterceptors(registry: InterceptorRegistry?) {
         registry!!.addInterceptor(exposeResponseInterceptor())
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry?) {
+        // don't do this at home
+        registry!!.addMapping("/api/**")
+                .allowedOrigins("*")
+                .allowedMethods("*")
+                .allowedHeaders("*")
+                .allowCredentials(false)
+                .maxAge(3600)
+        super.addCorsMappings(registry)
     }
 
     @Bean
@@ -53,10 +65,12 @@ class ApiApplication(val tagRepository: TagRepository,
         var alex = userRepository.save(User(email = "a.grison@gmail.com",
                 password = BCrypt.hashpw("foofoo", BCrypt.gensalt()),
                 token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE0OTM4MzE2NzEsInN1YiI6ImEuZ3Jpc29uQGdtYWlsLmNvbSIsImlzcyI6IktvdGxpbiZTcHJpbmciLCJleHAiOjE0OTQ2OTU2NzF9.nxRpiUsRgNGgJPhMws0GiidqihaQcTBv1MxPP7LNAKw",
-                username = "Alex", bio = "This is Alex"))
+                username = "Alex", bio = "This is Alex",
+                image = "http://i0.kym-cdn.com/entries/icons/original/000/014/959/Screenshot_116.png"))
         val rich = userRepository.save(User(email = "rich@gmail.com",
                 password = BCrypt.hashpw("barbar", BCrypt.gensalt()),
                 token = "lmao",
+                image = "https://pbs.twimg.com/media/Cbg6oKqUkAI2PAB.jpg",
                 username = "Rich", bio = "This is Rich", follows = mutableListOf(alex)))
         alex.follows.add(rich)
         alex = userRepository.save(alex)
