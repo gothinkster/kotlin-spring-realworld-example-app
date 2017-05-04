@@ -1,14 +1,16 @@
 package io.realworld.client
 
+import feign.Headers
 import feign.RequestLine
-import io.realworld.model.User
-import io.realworld.model.inout.Login
-import io.realworld.model.inout.Register
+import io.realworld.client.response.InLogin
+import io.realworld.client.response.InRegister
+import io.realworld.client.response.OutUser
 
+@Headers("Content-Type: application/json")
 interface UserClient {
     @RequestLine("POST /api/users/login")
-    fun login(login: Login): User
+    fun login(login: InLogin): OutUser
 
     @RequestLine("POST /api/users")
-    fun register(register: Register): User
+    fun register(register: InRegister): OutUser
 }

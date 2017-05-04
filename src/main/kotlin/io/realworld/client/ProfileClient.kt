@@ -1,16 +1,19 @@
 package io.realworld.client
 
+import feign.Headers
+import feign.Param
 import feign.RequestLine
-import io.realworld.model.inout.Profile
-import org.springframework.web.bind.annotation.PathVariable
+import io.realworld.client.response.OutProfile
 
+@Headers("Content-Type: application/json",
+        "Authorization: Token {token}")
 interface ProfileClient {
     @RequestLine("GET /api/profiles/{username}")
-    fun profile(@PathVariable username: String): Profile
+    fun profile(@Param("token") token: String, @Param("username") username: String): OutProfile
 
     @RequestLine("POST /api/profiles/{username}/follow")
-    fun follow(@PathVariable username: String): Profile
+    fun follow(@Param("token") token: String, @Param("username") username: String): OutProfile
 
     @RequestLine("DELETE /api/profiles/{username}/follow")
-    fun unfollow(@PathVariable username: String): Profile
+    fun unfollow(@Param("token") token: String, @Param("username") username: String): OutProfile
 }

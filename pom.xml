@@ -75,9 +75,9 @@
 			<version>8.18.0</version>
 		</dependency>
 		<dependency>
-			<groupId>io.github.openfeign</groupId>
-			<artifactId>feign-jackson</artifactId>
-			<version>9.4.0</version>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-gson</artifactId>
+			<version>8.18.0</version>
 		</dependency>
         <dependency>
             <groupId>com.github.slugify</groupId>
