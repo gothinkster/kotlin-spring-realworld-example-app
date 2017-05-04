@@ -57,7 +57,7 @@ class ApiApplication(val tagRepository: TagRepository,
     fun validator() = LocalValidatorFactoryBean()
 
     override fun run(vararg p0: String?) {
-        val java = tagRepository.save(Tag(name = "java"))
+       /* val java = tagRepository.save(Tag(name = "java"))
         val kotlin = tagRepository.save(Tag(name = "kotlin"))
         val dev = tagRepository.save(Tag(name = "dev"))
         val clojure = tagRepository.save(Tag(name = "clojure"))
@@ -84,7 +84,7 @@ class ApiApplication(val tagRepository: TagRepository,
                 favorited = mutableListOf(rich)))
         articleRepository.save(Article(title = "Clojure spec", body = "Clojure spec!", slug = "clojure-spec",
                 author = rich, tagList = mutableListOf(dev, clojure),
-                favorited = mutableListOf(alex)))
+                favorited = mutableListOf(alex)))*/
     }
 }
 
