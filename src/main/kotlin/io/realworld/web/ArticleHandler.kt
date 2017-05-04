@@ -149,7 +149,7 @@ class ArticleHandler(val repository: ArticleRepository,
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
     fun deleteComment(@PathVariable slug: String, @PathVariable id: Long) {
         repository.findBySlug(slug)?.let {
-            val comment = commentRepository.findOne(id).orElseThrow({ NotFoundException() })
+            val comment = commentRepository.findById(id).orElseThrow({ NotFoundException() })
             if (comment.article.id == it.id)
                 return commentRepository.delete(comment)
             throw ForbiddenRequestException()
