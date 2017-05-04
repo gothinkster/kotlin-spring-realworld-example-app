@@ -142,7 +142,7 @@ class ArticleHandler(val repository: ArticleRepository,
 
             return articleView(repository.save(updated), currentUser)
         }
-        
+
         throw NotFoundException()
     }
 
@@ -153,6 +153,7 @@ class ArticleHandler(val repository: ArticleRepository,
             if (it.author.id != userService.currentUser().id)
                 throw ForbiddenRequestException()
 
+            commentRepository.deleteAll(commentRepository.findByArticle(it))
             return repository.delete(it)
         }
         throw NotFoundException()
