@@ -1,14 +1,6 @@
 package io.realworld
 
 import io.realworld.jwt.ExposeResponseInterceptor
-import io.realworld.model.Article
-import io.realworld.model.Tag
-import io.realworld.model.User
-import io.realworld.repository.ArticleRepository
-import io.realworld.repository.TagRepository
-import io.realworld.repository.UserRepository
-import org.mindrot.jbcrypt.BCrypt
-import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.cache.annotation.EnableCaching
