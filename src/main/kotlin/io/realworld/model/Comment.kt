@@ -5,7 +5,7 @@ import javax.persistence.*
 
 @Entity
 data class Comment(var createdAt: OffsetDateTime = OffsetDateTime.now(),
-                   var updatedAt: OffsetDateTime? = null,
+                   var updatedAt: OffsetDateTime = OffsetDateTime.now(),
                    var body: String = "",
                    @ManyToOne
                    var article: Article = Article(),
