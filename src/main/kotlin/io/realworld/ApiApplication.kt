@@ -24,9 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @EnableCaching
 @SpringBootApplication
-class ApiApplication(val tagRepository: TagRepository,
-                     val userRepository: UserRepository,
-                     val articleRepository: ArticleRepository) : WebMvcConfigurerAdapter() {
+class ApiApplication : WebMvcConfigurerAdapter() {
 
     override fun addInterceptors(registry: InterceptorRegistry?) {
         registry!!.addInterceptor(exposeResponseInterceptor())
