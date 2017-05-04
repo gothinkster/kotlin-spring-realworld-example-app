@@ -31,7 +31,6 @@ class ApiApplication : WebMvcConfigurerAdapter() {
     }
 
     override fun addCorsMappings(registry: CorsRegistry?) {
-        // don't do this at home
         registry!!.addMapping("/api/**")
                 .allowedOrigins("*")
                 .allowedMethods("*")
