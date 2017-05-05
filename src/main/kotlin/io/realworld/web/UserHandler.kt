@@ -1,5 +1,6 @@
 package io.realworld.web
 
+import io.realworld.exception.ForbiddenRequestException
 import io.realworld.exception.InvalidRequest
 import io.realworld.exception.UnauthorizedException
 import io.realworld.jwt.ApiKeySecured
@@ -16,8 +17,6 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
-
-//@Validated
 @RestController
 class UserHandler(val repository: UserRepository,
                   val service: UserService) {
@@ -29,7 +28,8 @@ class UserHandler(val repository: UserRepository,
         service.login(login)?.let {
             return view(service.updateToken(it))
         }
-        throw UnauthorizedException()
+
+        throw ForbiddenRequestException()
     }
 
     @PostMapping("/api/users")
