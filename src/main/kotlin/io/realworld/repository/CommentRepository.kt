@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CommentRepository : CrudRepository<Comment, Long> {
     fun findByArticle(article: Article): List<Comment>
+    fun findByArticleOrderByCreatedAtDesc(article: Article): List<Comment>
 }

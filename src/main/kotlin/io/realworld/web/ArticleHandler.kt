@@ -164,7 +164,7 @@ class ArticleHandler(val repository: ArticleRepository,
     fun articleComments(@PathVariable slug: String): Any {
         repository.findBySlug(slug)?.let {
             val currentUser = userService.currentUser()
-            return commentsView(commentRepository.findByArticle(it), currentUser)
+            return commentsView(commentRepository.findByArticleOrderByCreatedAtDesc(it), currentUser)
         }
         throw NotFoundException()
     }
