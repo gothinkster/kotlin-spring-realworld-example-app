@@ -2,12 +2,14 @@ package io.realworld.service
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import io.realworld.exception.InvalidLoginException
 import io.realworld.model.User
 import io.realworld.model.inout.Login
 import io.realworld.repository.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.validation.Errors
 import java.util.*
 
 @Service
@@ -59,8 +61,9 @@ class UserService(val userRepository: UserRepository,
             if (BCrypt.checkpw(login.password!!, it.password)) {
                 return updateToken(it)
             }
+            throw InvalidLoginException("password", "invalid password")
         }
-        return null
+        throw InvalidLoginException("email", "unknown email")
     }
 
 }

@@ -1,8 +1,6 @@
 package io.realworld.web
 
-import io.realworld.exception.ForbiddenRequestException
-import io.realworld.exception.InvalidRequest
-import io.realworld.exception.UnauthorizedException
+import io.realworld.exception.*
 import io.realworld.jwt.ApiKeySecured
 import io.realworld.model.User
 import io.realworld.model.inout.Login
@@ -25,11 +23,16 @@ class UserHandler(val repository: UserRepository,
     fun login(@Valid @RequestBody login: Login, errors: Errors): Any {
         InvalidRequest.check(errors)
 
-        service.login(login)?.let {
-            return view(service.updateToken(it))
+        try {
+            service.login(login)?.let {
+                return view(service.updateToken(it))
+            }
+            return ForbiddenRequestException()
+        } catch (e: InvalidLoginException) {
+            val errors = org.springframework.validation.BindException(this, "")
+            errors.addError(FieldError("", e.field, e.error))
+            throw InvalidException(errors)
         }
-
-        throw ForbiddenRequestException()
     }
 
     @PostMapping("/api/users")
