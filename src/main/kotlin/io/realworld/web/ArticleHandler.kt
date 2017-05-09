@@ -20,6 +20,7 @@ import io.realworld.repository.specification.ArticlesSpecifications
 import io.realworld.service.UserService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpStatus
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
@@ -147,6 +148,7 @@ class ArticleHandler(val repository: ArticleRepository,
     }
 
     @ApiKeySecured
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/articles/{slug}")
     fun deleteArticle(@PathVariable slug: String) {
         repository.findBySlug(slug)?.let {
@@ -183,13 +185,18 @@ class ArticleHandler(val repository: ArticleRepository,
     }
 
     @ApiKeySecured
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/articles/{slug}/comments/{id}")
     fun deleteComment(@PathVariable slug: String, @PathVariable id: Long) {
         repository.findBySlug(slug)?.let {
+            val currentUser = userService.currentUser()
             val comment = commentRepository.findById(id).orElseThrow({ NotFoundException() })
-            if (comment.article.id == it.id)
-                return commentRepository.delete(comment)
-            throw ForbiddenRequestException()
+            if (comment.article.id != it.id)
+                throw ForbiddenRequestException()
+            if (comment.author.id != currentUser.id)
+                throw ForbiddenRequestException()
+
+            return commentRepository.delete(comment)
         }
         throw NotFoundException()
     }

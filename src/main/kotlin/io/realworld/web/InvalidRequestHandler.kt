@@ -29,7 +29,7 @@ class InvalidRequestHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     fun processValidationError(ex: InvalidException): Any {
         val errors = mutableMapOf<String, MutableList<String>>()
-        ex.errors.fieldErrors.forEach {
+        ex.errors?.fieldErrors?.forEach {
             if (errors.containsKey(it.field))
                 errors.get(it.field)!!.add(it.defaultMessage)
             else

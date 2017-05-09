@@ -57,7 +57,9 @@ class UserHandler(val repository: UserRepository,
 
     @ApiKeySecured
     @PutMapping("/api/user")
-    fun updateUser(@RequestBody user: UpdateUser): Any {
+    fun updateUser(@Valid @RequestBody user: UpdateUser, errors: Errors): Any {
+        InvalidRequest.check(errors)
+
         val currentUser = service.currentUser()
 
         // check for errors

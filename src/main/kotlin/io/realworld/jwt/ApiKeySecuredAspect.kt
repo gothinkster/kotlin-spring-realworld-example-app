@@ -116,7 +116,7 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
                         if (StringUtils.isEmpty(e.message)) rs.reason else e.message,
                         rs.value)
             } else {
-                LOG.error("ERROR accessing resource", e)
+                LOG.error("ERROR accessing resource")
             }
             throw e
         }

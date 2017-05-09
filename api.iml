@@ -5,48 +5,27 @@
       <configuration />
     </facet>
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="1">
-        <option name="compilerInfo">
-          <KotlinCompilerInfo>
-            <option name="compilerSettings">
-              <CompilerSettings />
-            </option>
-            <option name="k2jsCompilerArguments">
-              <K2JSCompilerArguments />
-            </option>
-            <option name="k2jvmCompilerArguments">
-              <K2JVMCompilerArguments>
-                <option name="jvmTarget" value="1.8" />
-              </K2JVMCompilerArguments>
-            </option>
-            <option name="_commonCompilerArguments">
-              <DummyImpl>
-                <option name="pluginClasspaths">
-                  <array>
-                    <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-maven-allopen/1.1.2/kotlin-maven-allopen-1.1.2.jar" />
-                  </array>
-                </option>
-                <option name="coroutinesWarn" value="true" />
-                <option name="pluginOptions">
-                  <array>
-                    <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component" />
-                    <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional" />
-                    <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async" />
-                    <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable" />
-                  </array>
-                </option>
-              </DummyImpl>
-            </option>
-          </KotlinCompilerInfo>
-        </option>
-        <option name="useProjectSettings" value="false" />
-        <option name="versionInfo">
-          <KotlinVersionInfo>
-            <option name="apiLevel" value="1.1" />
-            <option name="languageLevel" value="1.1" />
-            <option name="targetPlatformName" value="JVM 1.8" />
-          </KotlinVersionInfo>
-        </option>
+      <configuration version="2" platform="JVM 1.8" useProjectSettings="false">
+        <compilerSettings />
+        <compilerArguments>
+          <option name="jvmTarget" value="1.8" />
+          <option name="languageVersion" value="1.1" />
+          <option name="apiVersion" value="1.1" />
+          <option name="pluginClasspaths">
+            <array>
+              <option value="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-maven-allopen/1.1.2/kotlin-maven-allopen-1.1.2.jar" />
+            </array>
+          </option>
+          <option name="coroutinesWarn" value="true" />
+          <option name="pluginOptions">
+            <array>
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async" />
+              <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable" />
+            </array>
+          </option>
+        </compilerArguments>
       </configuration>
     </facet>
   </component>

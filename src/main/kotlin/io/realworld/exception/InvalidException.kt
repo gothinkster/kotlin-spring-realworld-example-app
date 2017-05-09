@@ -2,7 +2,7 @@ package io.realworld.exception
 
 import org.springframework.validation.Errors
 
-data class InvalidException(val errors: Errors) : RuntimeException()
+data class InvalidException(val errors: Errors?) : RuntimeException()
 
 object InvalidRequest {
     fun check(errors: Errors) {
