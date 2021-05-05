@@ -27,6 +27,6 @@ class ExposeResponseInterceptor : HandlerInterceptorAdapter() {
     }
 
     companion object {
-        val KEY = "spring.internal.httpServletResponse"
+        const val KEY = "spring.internal.httpServletResponse"
     }
 }

@@ -13,7 +13,7 @@ data class Comment(val createdAt: String,
                    val author: Profile,
                    val id: Long) {
     companion object {
-        fun dateFormat(date: OffsetDateTime): String {
+        private fun dateFormat(date: OffsetDateTime): String {
             return date.toZonedDateTime().withZoneSameInstant(ZoneId.of("Z")).format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
         }
 

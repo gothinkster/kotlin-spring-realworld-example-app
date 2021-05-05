@@ -29,9 +29,9 @@ class UserHandler(val repository: UserRepository,
             }
             return ForbiddenRequestException()
         } catch (e: InvalidLoginException) {
-            val errors = org.springframework.validation.BindException(this, "")
-            errors.addError(FieldError("", e.field, e.error))
-            throw InvalidException(errors)
+            val loginErrors = BindException(this, "")
+            loginErrors.addError(FieldError("", e.field, e.error))
+            throw InvalidException(loginErrors)
         }
     }
 
@@ -40,9 +40,9 @@ class UserHandler(val repository: UserRepository,
         InvalidRequest.check(errors)
 
         // check for duplicate user
-        val errors = org.springframework.validation.BindException(this, "")
-        checkUserAvailability(errors, register.email, register.username)
-        InvalidRequest.check(errors)
+        val registerErrors = BindException(this, "")
+        checkUserAvailability(registerErrors, register.email, register.username)
+        InvalidRequest.check(registerErrors)
 
         val user = User(username = register.username!!,
                 email = register.email!!, password = BCrypt.hashpw(register.password, BCrypt.gensalt()))
@@ -63,21 +63,21 @@ class UserHandler(val repository: UserRepository,
         val currentUser = service.currentUser()
 
         // check for errors
-        val errors = org.springframework.validation.BindException(this, "")
+        val updateErrors = BindException(this, "")
         if (currentUser.email != user.email && user.email != null) {
             if (repository.existsByEmail(user.email!!)) {
-                errors.addError(FieldError("", "email", "already taken"))
+                updateErrors.addError(FieldError("", "email", "already taken"))
             }
         }
         if (currentUser.username != user.username && user.username != null) {
             if (repository.existsByUsername(user.username!!)) {
-                errors.addError(FieldError("", "username", "already taken"))
+                updateErrors.addError(FieldError("", "username", "already taken"))
             }
         }
         if (user.password == "") {
-            errors.addError(FieldError("", "password", "can't be empty"))
+            updateErrors.addError(FieldError("", "password", "can't be empty"))
         }
-        InvalidRequest.check(errors)
+        InvalidRequest.check(updateErrors)
 
         // update the user
         val u = currentUser.copy(email = user.email ?: currentUser.email, username = user.username ?: currentUser.username,
@@ -92,13 +92,13 @@ class UserHandler(val repository: UserRepository,
     }
 
     private fun checkUserAvailability(errors: BindException, email: String?, username: String?) {
-        email?.let { email ->
-            if (repository.existsByEmail(email)) {
+        email?.let {
+            if (repository.existsByEmail(it)) {
                 errors.addError(FieldError("", "email", "already taken"))
             }
         }
-        username?.let { username ->
-            if (repository.existsByUsername(username)) {
+        username?.let {
+            if (repository.existsByUsername(it)) {
                 errors.addError(FieldError("", "username", "already taken"))
             }
         }

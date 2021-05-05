@@ -8,7 +8,7 @@ import javax.persistence.criteria.Predicate
 
 object ArticlesSpecifications {
     fun lastArticles(tag: Tag?, author: User?, fav: User?): Specification<Article> {
-        return Specification { root, query, cb ->
+        return Specification { root, _, cb ->
             val predicates = mutableListOf<Predicate>()
 
             tag?.let {

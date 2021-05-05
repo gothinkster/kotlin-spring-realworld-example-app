@@ -31,9 +31,9 @@ class InvalidRequestHandler {
         val errors = mutableMapOf<String, MutableList<String>>()
         ex.errors?.fieldErrors?.forEach {
             if (errors.containsKey(it.field))
-                errors.get(it.field)!!.add(it.defaultMessage)
+                errors[it.field]!!.add(it.defaultMessage)
             else
-                errors.put(it.field, mutableListOf(it.defaultMessage))
+                errors[it.field] = mutableListOf(it.defaultMessage)
         }
         return mapOf("errors" to errors)
     }

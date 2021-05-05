@@ -18,7 +18,7 @@ data class Article(var title: String? = null,
                    var favorited: Boolean = false,
                    var favoritesCount: Int = 0) {
     companion object {
-        fun dateFormat(date: OffsetDateTime): String {
+        private fun dateFormat(date: OffsetDateTime): String {
             return date.toZonedDateTime().withZoneSameInstant(ZoneId.of("Z")).format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
         }
 
