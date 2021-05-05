@@ -102,7 +102,7 @@ class ArticleHandler(val repository: ArticleRepository,
     @ApiKeySecured
     @PutMapping("/api/articles/{slug}")
     fun updateArticle(@PathVariable slug: String, @RequestBody article: UpdateArticle): Any {
-        repository.findBySlug(slug)?.let {
+        repository.findBySlug(slug)?.let { it ->
             val currentUser = userService.currentUser()
             if (it.author.id != currentUser.id)
                 throw ForbiddenRequestException()
@@ -117,13 +117,13 @@ class ArticleHandler(val repository: ArticleRepository,
                 errors.addError(FieldError("", "body", "can't be empty"))
             InvalidRequest.check(errors)
 
-            var slug: String = it.slug
+            var articleSlug: String = it.slug
             article.title?.let { newTitle ->
                 if (newTitle != it.title) {
                     // we don't want conflicting slugs
-                    slug = Slugify().slugify(article.title!!)
-                    if (repository.existsBySlug(slug)) {
-                        slug += "-" + UUID.randomUUID().toString().substring(0, 8)
+                    articleSlug = Slugify().slugify(article.title!!)
+                    if (repository.existsBySlug(articleSlug)) {
+                        articleSlug += "-" + UUID.randomUUID().toString().substring(0, 8)
                     }
                 }
             }
@@ -136,7 +136,7 @@ class ArticleHandler(val repository: ArticleRepository,
             val updated = it.copy(title = article.title ?: it.title,
                     description = article.description ?: it.description,
                     body = article.body ?: it.body,
-                    slug = slug,
+                    slug = articleSlug,
                     updatedAt = OffsetDateTime.now(),
                     tagList = if (tagList == null || tagList.isEmpty()) it.tagList
                     else tagList.toMutableList())
@@ -190,7 +190,7 @@ class ArticleHandler(val repository: ArticleRepository,
     fun deleteComment(@PathVariable slug: String, @PathVariable id: Long) {
         repository.findBySlug(slug)?.let {
             val currentUser = userService.currentUser()
-            val comment = commentRepository.findById(id).orElseThrow({ NotFoundException() })
+            val comment = commentRepository.findById(id).orElseThrow { NotFoundException() }
             if (comment.article.id != it.id)
                 throw ForbiddenRequestException()
             if (comment.author.id != currentUser.id)

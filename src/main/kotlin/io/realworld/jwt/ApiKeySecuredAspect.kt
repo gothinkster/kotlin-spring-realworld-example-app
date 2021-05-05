@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse
 class ApiKeySecuredAspect(@Autowired val userService: UserService) {
 
     @Autowired
-    var request: HttpServletRequest? = null
+    lateinit var request: HttpServletRequest
 
     @Pointcut(value = "execution(@io.realworld.jwt.ApiKeySecured * *.*(..))")
     fun securedApiPointcut() {
@@ -41,20 +41,20 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
     @Around("securedApiPointcut()")
     @Throws(Throwable::class)
     fun aroundSecuredApiPointcut(joinPoint: ProceedingJoinPoint): Any? {
-        if (request!!.method == "OPTIONS")
+        if (request.method == "OPTIONS")
             return joinPoint.proceed()
 
         // see the ExposeResponseInterceptor class.
-        val response = request!!.getAttribute(ExposeResponseInterceptor.KEY) as HttpServletResponse
+        val response = request.getAttribute(ExposeResponseInterceptor.KEY) as HttpServletResponse
 
         // check for needed roles
         val signature = joinPoint.signature as MethodSignature
         val method = signature.method
         val anno = method.getAnnotation(ApiKeySecured::class.java)
 
-        val apiKey = request!!.getHeader("Authorization")?.replace("Token ", "")
+        val apiKey = request.getHeader("Authorization")?.replace("Token ", "")
 
-        if (StringUtils.isEmpty(apiKey) && anno.mandatory) {
+        if (!StringUtils.hasText(apiKey) && anno.mandatory) {
             LOG.info("No Authorization part of the request header/parameters, returning {}.", HttpServletResponse.SC_UNAUTHORIZED)
 
             issueError(response)
@@ -113,7 +113,7 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
             val rs = e.javaClass.getAnnotation(ResponseStatus::class.java)
             if (rs != null) {
                 LOG.error("ERROR accessing resource, reason: '{}', status: {}.",
-                        if (StringUtils.isEmpty(e.message)) rs.reason else e.message,
+                        if (!StringUtils.hasText(e.message)) rs.reason else e.message,
                         rs.value)
             } else {
                 LOG.error("ERROR accessing resource")

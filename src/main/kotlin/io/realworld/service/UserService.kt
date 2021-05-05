@@ -9,7 +9,6 @@ import io.realworld.repository.UserRepository
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import org.springframework.validation.Errors
 import java.util.*
 
 @Service
@@ -32,7 +31,7 @@ class UserService(val userRepository: UserRepository,
         return user
     }
 
-    fun currentUser() = currentUser.get()
+    fun currentUser(): User = currentUser.get()
 
     fun newToken(user: User): String {
         return Jwts.builder()
