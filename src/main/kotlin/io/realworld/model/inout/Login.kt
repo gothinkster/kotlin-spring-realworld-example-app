@@ -14,6 +14,4 @@ class Login(
         message = "must be a valid email"
     ) var email: String?, @NotNull(message = "can't be missing")
     @Size(min = 1, message = "can't be empty") var password: String?
-) {
-
-}
+)

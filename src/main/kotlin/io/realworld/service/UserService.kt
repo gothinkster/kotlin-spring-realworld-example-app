@@ -18,11 +18,7 @@ class UserService(val userRepository: UserRepository,
 
     val currentUser = ThreadLocal<User>()
 
-    //@Cacheable(cacheNames=arrayOf("usersByToken"), key="#token")
     fun findByToken(token: String) = userRepository.findByToken(token)
-
-    //@Cacheable("usersByName")
-    fun findByUsername(username: String) = userRepository.findByUsername(username)
 
     fun clearCurrentUser() = currentUser.remove()
 
@@ -49,7 +45,6 @@ class UserService(val userRepository: UserRepository,
                 && Date().before(claims.expiration)
     }
 
-    //@CachePut(cacheNames=arrayOf("usersByToken"), key="#user.token")
     fun updateToken(user: User): User {
         user.token = newToken(user)
         return userRepository.save(user)
