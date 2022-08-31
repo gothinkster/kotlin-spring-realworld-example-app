@@ -38,7 +38,7 @@ class ArticleHandler(val repository: ArticleRepository,
                      val tagRepository: TagRepository) {
 
     @ApiKeySecured(mandatory = false)
-    @GetMapping("/api/articles")
+    @GetMapping("/api/articles", produces = ["application/json"])
     fun articles(@RequestParam(defaultValue = "20") limit: Int,
                  @RequestParam(defaultValue = "0") offset: Int,
                  @RequestParam(defaultValue = "") tag: String,
