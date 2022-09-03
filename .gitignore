@@ -17,6 +17,9 @@ target/
 !maven-wrapper.jar
 *.iml
 
-#System Files
+# System Files
 .DS_Store
 Thumbs.db
+
+# Local environment variables
+.env

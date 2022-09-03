@@ -25,8 +25,9 @@
 		<java.version>11</java.version>
 		<kotlin.version>1.6.21</kotlin.version>
 		<feign.version>8.18.0</feign.version>
-
 		<springdoc-openapi.version>1.6.11</springdoc-openapi.version>
+		<jackson-module-kotlin.version>2.13.3</jackson-module-kotlin.version>
+		<maven-surefire-report-plugin.version>3.0.0-M7</maven-surefire-report-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -65,7 +66,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-kotlin</artifactId>
-            <version>2.13.2</version>
+            <version>${jackson-module-kotlin.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -107,10 +108,6 @@
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -224,5 +221,13 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-report-plugin.version}</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
