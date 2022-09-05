@@ -171,7 +171,7 @@
 				</executions>
 				<configuration>
 					<apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
-					<outputFileName>openapi.yaml</outputFileName>
+					<outputFileName>generated-openapi.yaml</outputFileName>
 					<outputDir>oas/</outputDir>
 				</configuration>
 			</plugin>
