@@ -44,8 +44,15 @@ class UserHandler(val repository: UserRepository,
 
         // check for duplicate user
         val registerErrors = BindException(this, "")
-        checkUserAvailability(registerErrors, register.email, register.username)
-        InvalidRequest.check(registerErrors)
+        if (repository.existsByEmail(register.email!!)) {
+            registerErrors.addError(FieldError("", "email", "already taken"))
+        }
+        if (repository.existsByUsername(register.username!!)) {
+            registerErrors.addError(FieldError("", "username", "already taken"))
+        }
+        if (registerErrors.hasErrors()) {
+            throw InvalidException(registerErrors)
+        }
 
         val user = User(username = register.username!!,
                 email = register.email!!, password = BCrypt.hashpw(register.password, BCrypt.gensalt()))
