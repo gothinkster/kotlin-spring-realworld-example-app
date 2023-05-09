@@ -1,7 +1,7 @@
 package io.realworld.model
 
 import java.time.OffsetDateTime
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 data class Comment(var createdAt: OffsetDateTime = OffsetDateTime.now(),

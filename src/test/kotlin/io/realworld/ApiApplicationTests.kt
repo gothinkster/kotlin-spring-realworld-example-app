@@ -36,7 +36,8 @@ class ApiApplicationTests {
         environment.let {
             randomServerPort = Integer.valueOf(it!!.getProperty("local.server.port"))
             return Feign.builder()
-                    .encoder(GsonEncoder()).decoder(GsonDecoder())
+                    .encoder(GsonEncoder())
+                    .decoder(GsonDecoder())
                     .target(t, "http://localhost:${randomServerPort}")
         }
     }

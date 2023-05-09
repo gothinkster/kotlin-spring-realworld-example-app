@@ -16,7 +16,7 @@ import org.springframework.validation.BindException
 import org.springframework.validation.Errors
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
+import jakarta.validation.Valid
 
 @RestController
 class UserHandler(val repository: UserRepository,

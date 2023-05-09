@@ -26,7 +26,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 import java.util.*
-import javax.validation.Valid
+import jakarta.validation.Valid
 import io.realworld.model.inout.Article as ArticleIO
 import io.realworld.model.inout.Comment as CommentOut
 

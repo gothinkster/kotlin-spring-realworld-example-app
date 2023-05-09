@@ -5,7 +5,7 @@ import io.realworld.model.User
 
 @JsonRootName("profile")
 data class Profile(var username: String,
-                   var bio: String,
+                   var bio: String?,
                    var image: String?,
                    var following: Boolean) {
     companion object {
