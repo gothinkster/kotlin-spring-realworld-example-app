@@ -10,20 +10,20 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 @Configuration
 @EnableCaching
 @SpringBootApplication
-class ApiApplication : WebMvcConfigurerAdapter() {
+class ApiApplication : WebMvcConfigurer {
 
-    override fun addInterceptors(registry: InterceptorRegistry?) {
-        registry!!.addInterceptor(exposeResponseInterceptor())
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(exposeResponseInterceptor())
     }
 
-    override fun addCorsMappings(registry: CorsRegistry?) {
-        registry!!.addMapping("/api/**")
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registry.addMapping("/api/**")
                 .allowedOrigins("*")
                 .allowedMethods("*")
                 .allowedHeaders("*")

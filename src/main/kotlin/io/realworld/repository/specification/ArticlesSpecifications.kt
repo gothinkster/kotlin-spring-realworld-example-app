@@ -4,7 +4,7 @@ import io.realworld.model.Article
 import io.realworld.model.Tag
 import io.realworld.model.User
 import org.springframework.data.jpa.domain.Specification
-import javax.persistence.criteria.Predicate
+import jakarta.persistence.criteria.Predicate
 
 object ArticlesSpecifications {
     fun lastArticles(tag: Tag?, author: User?, fav: User?): Specification<Article> {

@@ -2,10 +2,11 @@ package io.realworld.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonRootName
-import javax.persistence.*
+import jakarta.persistence.*
 
 @Entity
 @JsonRootName("user")
+@Table(name = "users")
 data class User(var email: String = "",
                 @JsonIgnore
                 var password: String = "",

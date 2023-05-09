@@ -1,10 +1,9 @@
 package io.realworld.jwt
 
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
-
-import javax.servlet.ServletException
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.ServletException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.servlet.HandlerInterceptor
 
 /**
  * This is an interceptor that saves a reference from the response into the request.
@@ -19,10 +18,10 @@ import javax.servlet.http.HttpServletResponse
 
  * Trust me, I'm an engineer.
  */
-class ExposeResponseInterceptor : HandlerInterceptorAdapter() {
+class ExposeResponseInterceptor : HandlerInterceptor {
     @Throws(ServletException::class)
-    override fun preHandle(request: HttpServletRequest?, response: HttpServletResponse?, handler: Any?): Boolean {
-        request!!.setAttribute(KEY, response)
+    override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        request.setAttribute(KEY, response)
         return true
     }
 

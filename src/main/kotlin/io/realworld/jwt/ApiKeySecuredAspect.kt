@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.util.StringUtils
 import org.springframework.web.bind.annotation.ResponseStatus
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 /**
  * Aspect whose goal is to check automatically that methods
@@ -79,7 +79,7 @@ class ApiKeySecuredAspect(@Autowired val userService: UserService) {
                         LOG.info("No problem because not mandatory")
                         user = User()
                     } else { // error
-                        LOG.info("Authorization: {} is an invalid JWT.", apiKey, HttpServletResponse.SC_UNAUTHORIZED)
+                        LOG.info("Authorization: {} is an invalid JWT.", apiKey)
 
                         issueError(response)
                         return null
